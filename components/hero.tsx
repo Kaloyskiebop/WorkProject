@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Github, Linkedin, Mail } from "lucide-react"
+import { ArrowRight, Facebook, Github, Linkedin, Mail } from "lucide-react"
 import Link from "next/link"
 
 export function Hero() {
@@ -45,9 +45,9 @@ export function Hero() {
             <div className="pt-8 border-t border-border/50">
               <p className="text-sm text-muted-foreground mb-4">Connect with me</p>
               <div className="flex items-center gap-4">
-                <Link href="#" className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors">
-                  <Github className="h-5 w-5" />
-                  <span className="sr-only">GitHub</span>
+                <Link href="https://web.facebook.com/Assortedqt" target="_blank" className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors">
+                  <Facebook className="h-5 w-5" />
+                  <span className="sr-only">Facebook</span>
                 </Link>
                 <Link href="#" className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors">
                   <Linkedin className="h-5 w-5" />

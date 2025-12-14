@@ -1,4 +1,4 @@
-import { Github, Linkedin, Mail } from "lucide-react"
+import { Facebook, Github, Linkedin, Mail } from "lucide-react"
 
 export function Footer() {
   return (
@@ -9,13 +9,13 @@ export function Footer() {
 
           <div className="flex items-center gap-4">
             <a
-              href="https://github.com"
+              href="https://web.facebook.com/Assortedqt"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="GitHub"
+              aria-label="Facebook"
             >
-              <Github className="h-5 w-5" />
+              <Facebook className="h-5 w-5" />
             </a>
             <a
               href="https://linkedin.com"
