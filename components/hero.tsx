@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Facebook, Github, Linkedin, Mail } from "lucide-react"
+import { ArrowRight, Facebook, Github, Instagram, Linkedin, Mail } from "lucide-react"
 import Link from "next/link"
 
 export function Hero() {
@@ -49,11 +49,11 @@ export function Hero() {
                   <Facebook className="h-5 w-5" />
                   <span className="sr-only">Facebook</span>
                 </Link>
-                <Link href="#" className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors">
-                  <Linkedin className="h-5 w-5" />
+                <Link href="https://www.instagram.com/lemoj_sncg/" className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors">
+                  <Instagram className="h-5 w-5" />
                   <span className="sr-only">LinkedIn</span>
                 </Link>
-                <Link href="mailto:your@email.com" className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Link href="mailto:jomeljohn.oracion@hcdc.edu.ph" className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors">
                   <Mail className="h-5 w-5" />
                   <span className="sr-only">Email</span>
                 </Link>
