@@ -82,7 +82,7 @@ export function Hero() {
               <div className="absolute -bottom-6 -left-6 bg-card border border-border p-4 rounded-xl shadow-lg hidden md:block">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                    <span className="font-bold text-lg">5+</span>
+                    <span className="font-bold text-lg">3+</span>
                   </div>
                   <div className="text-sm">
                     <p className="font-semibold text-foreground">Years Experience</p>
