@@ -4,7 +4,7 @@ import Link from "next/link"
 
 export function Hero() {
   return (
-    <section id="home" className="min-h-[90vh] flex items-center pt-20 pb-16 overflow-hidden">
+    <section id="home" className="min-h-screen flex items-center pt-20 pb-16 overflow-hidden">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           
@@ -21,7 +21,7 @@ export function Hero() {
             <div className="space-y-4">
               <h1 className="text-5xl font-bold tracking-tight md:text-7xl text-foreground">
                 Building digital <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-chart-4">
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-chart-4">
                   experiences.
                 </span>
               </h1>
@@ -75,7 +75,7 @@ export function Hero() {
               <img
                 src="/pamboat.jpg" 
                 alt="Jomel"
-                className="w-full max-w-md rounded-3xl shadow-2xl border border-border/50 object-cover aspect-[3/4]"
+                className="w-full max-w-md rounded-3xl shadow-2xl border border-border/50 object-cover aspect-3/4"
               />
               
               {/* Optional: Floating Badge on Image */}

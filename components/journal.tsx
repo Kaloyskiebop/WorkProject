@@ -1,179 +1,366 @@
-import { Card } from "@/components/ui/card"
-import Image from "next/image"
+"use client"
 
+import { useState, useEffect } from "react"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import Image from "next/image"
+import { motion, AnimatePresence } from "framer-motion"
+import { BookOpen, X, ChevronLeft, ChevronRight, ImageIcon } from "lucide-react"
+
+// Updated data structure to support multiple images (slideshow)
 const journalEntries = [
   {
     id: 1,
-    title: "Museum of Natural History",
-    date: "March 15, 2024",
-    location: "New York City",
+    title: "Arrival & Worldtech Information Solutions",
+    date: "Day 1",
+    location: "Cebu City",
     description:
-      "An incredible exploration of ancient artifacts and geological wonders. The exhibit on prehistoric life was particularly fascinating, offering insights into millions of years of evolution.",
+      "Our educational tour began with our arrival in the 'Queen City of the South'. We headed straight to Worldtech Information Solutions, a premier provider of IT business solutions. It was an eye-opening introduction to the professional world of software development and corporate IT training.",
     observations: [
-      "Detailed fossil collections spanning multiple eras",
-      "Interactive displays enhancing learning experience",
-      "Impressive scale models of extinct creatures",
+      "Industry-standard software development lifecycles",
+      "Overview of corporate IT infrastructure and security",
+      "Insights into career paths for IT graduates",
     ],
-    image: "/natural-history-museum-interior.jpg",
+    // Converted single 'image' to 'images' array for slideshow
+    images: [
+      "/journal/worldtech.jpg",
+      "/journal/worldtech2.jpg",
+      "/journal/worldtech3.jpg"
+    ], 
+    writtenJournal: "/journal/worldtech.jpg", 
   },
   {
     id: 2,
-    title: "Contemporary Art Gallery",
-    date: "April 2, 2024",
-    location: "San Francisco",
+    title: "Tech Immersion: Rivan IT & CodeChum",
+    date: "Day 2",
+    location: "Cebu City",
     description:
-      "A thought-provoking collection of modern art installations that challenge conventional perspectives. The exhibition explored themes of identity, technology, and human connection.",
+      "A heavy technical day focused on skill-building. We started with hands-on web development workshops at Rivan IT, learning modern frameworks. Later, we visited CodeChum, where we engaged in gamified coding challenges and heard from expert speakers about the future of tech education.",
     observations: [
-      "Innovative use of digital media in installations",
-      "Strong emphasis on interactive viewer participation",
-      "Diverse artistic voices and perspectives represented",
+      "Hands-on application of modern web technologies",
+      "Gamified learning approaches to algorithm solving",
+      "Networking with expert developers and mentors",
     ],
-    image: "/modern-art-gallery.png",
+    images: [
+      "/journal/rivanit.jpg", 
+      "/journal/rivanit2.jpg",
+      "/journal/codechum1.jpg",
+      "/journal/codechum2.jpg"
+    ],
+    writtenJournal: "/journal-entry-2.jpg",
   },
   {
     id: 3,
-    title: "Botanical Gardens Visit",
-    date: "May 20, 2024",
-    location: "Seattle",
+    title: "Virtual Realities at Mata Technologies",
+    date: "Day 3",
+    location: "Cebu City",
     description:
-      "A serene walk through diverse ecosystems, from tropical rainforests to arid desert landscapes. The gardens showcase the incredible biodiversity of plant life.",
+      "We stepped into the future with Mata Technologies, a pioneer in Virtual and Augmented Reality in the Philippines. We explored how they use the 'Mataverse' to preserve cultural heritage and revolutionize tourism through immersive technology.",
     observations: [
-      "Over 200 species of rare and endangered plants",
-      "Sustainable gardening practices demonstrated",
-      "Beautiful seasonal displays and native flora",
+      "Demonstrations of VR/AR in tourism and heritage",
+      "The intersection of creative arts and advanced tech",
+      "Potential of immersive technologies in enterprise",
     ],
-    image: "/botanical-garden-greenhouse.jpg",
+    images: [
+      "/journal/mata.jpg",
+      "/journal/mata2.jpg",
+      "/journal/mata3.jpg",
+      "/journal/mata4.jpg",
+    ],
+    writtenJournal: "/journal-entry-3.jpg",
   },
   {
     id: 4,
-    title: "Botanical Gardens Visit",
-    date: "May 20, 2024",
-    location: "Seattle",
+    title: "Crisis Response: Tagbilaran 911",
+    date: "Day 4",
+    location: "Tagbilaran City, Bohol",
     description:
-      "A serene walk through diverse ecosystems, from tropical rainforests to arid desert landscapes. The gardens showcase the incredible biodiversity of plant life.",
+      "Crossing over to Bohol, we visited the Tagbilaran City Command Center. We witnessed firsthand how technology plays a critical role in public safety, seeing how their integrated surveillance and dispatch systems coordinate real-time emergency responses.",
     observations: [
-      "Over 200 species of rare and endangered plants",
-      "Sustainable gardening practices demonstrated",
-      "Beautiful seasonal displays and native flora",
+      "Integration of CCTVs with emergency dispatch",
+      "Real-time data handling for crisis management",
+      "Public safety technology infrastructure",
     ],
-    image: "/botanical-garden-greenhouse.jpg",
-  },
-  {
-    id: 5,
-    title: "Botanical Gardens Visit",
-    date: "May 20, 2024",
-    location: "Seattle",
-    description:
-      "A serene walk through diverse ecosystems, from tropical rainforests to arid desert landscapes. The gardens showcase the incredible biodiversity of plant life.",
-    observations: [
-      "Over 200 species of rare and endangered plants",
-      "Sustainable gardening practices demonstrated",
-      "Beautiful seasonal displays and native flora",
+    images: [
+      "/journal/tagbilaran.jpg",
+      "/journal/tagbilaran2.jpg",
+      "/journal/tagbilaran3.jpg"
     ],
-    image: "/botanical-garden-greenhouse.jpg",
+    writtenJournal: "/journal-entry-4.jpg",
   },
 ]
 
 const galleryImages = [
   {
     id: 1,
-    src: "/educational-tour-group-photo.jpg",
-    alt: "Educational tour group",
+    src: "/cebu-group-arrival.jpg",
+    alt: "Arrival in Cebu",
   },
   {
     id: 2,
-    src: "/museum-exhibit-close-up.jpg",
-    alt: "Museum exhibit detail",
+    src: "/rivan-workshop.jpg",
+    alt: "Rivan IT Workshop",
   },
   {
     id: 3,
-    src: "/nature-observation-notes.jpg",
-    alt: "Field notes and observations",
+    src: "/codechum-challenge.jpg",
+    alt: "CodeChum Session",
   },
   {
     id: 4,
-    src: "/architectural-details.jpg",
-    alt: "Architectural studies",
+    src: "/mata-vr-demo.jpg",
+    alt: "VR Demo at Mata",
   },
   {
     id: 5,
-    src: "/vast-mountain-valley.png",
-    alt: "Landscape documentation",
+    src: "/bohol-transit.jpg",
+    alt: "Travel to Bohol",
   },
   {
     id: 6,
-    src: "/research-materials.jpg",
-    alt: "Research materials",
+    src: "/command-center-monitor.jpg",
+    alt: "911 Command Center",
   },
-  
 ]
 
+// Sub-component for individual journal cards to handle slideshow state
+function JournalEntryCard({ entry, onOpenWritten }: { entry: any, onOpenWritten: (img: string) => void }) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
+  // Automatic slideshow effect
+  useEffect(() => {
+    // Only run interval if there is more than 1 image
+    if (entry.images.length <= 1) return
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % entry.images.length)
+    }, 4000) // Change image every 4 seconds
+
+    return () => clearInterval(interval)
+  }, [entry.images.length])
+
+  return (
+    <Card className="overflow-hidden bg-card border-border/50 hover:border-border transition-colors">
+      <div className="grid md:grid-cols-2 gap-0">
+        {/* Slideshow Area */}
+        <div className={`relative h-64 md:h-full min-h-[300px] bg-muted ${entry.id % 2 === 0 ? "" : "md:order-2"}`}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentImageIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1 }} // Slower fade for smoother auto-transition
+              className="absolute inset-0"
+            >
+              <Image
+                src={entry.images[currentImageIndex] || "/placeholder.svg"}
+                alt={`${entry.title} - Image ${currentImageIndex + 1}`}
+                fill
+                className="object-cover"
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Optional: Simple Indicator Dots instead of controls */}
+          {entry.images.length > 1 && (
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
+              {entry.images.map((_: any, idx: number) => (
+                <div 
+                  key={idx}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    idx === currentImageIndex 
+                      ? "w-4 bg-white" 
+                      : "w-1.5 bg-white/50"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Content Area */}
+        <div className="p-8 md:p-12 space-y-6 flex flex-col justify-center">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3 text-sm text-muted-foreground uppercase tracking-wider font-medium">
+              <span className="text-primary">{entry.date}</span>
+              <span>•</span>
+              <span>{entry.location}</span>
+            </div>
+            <h3 className="text-2xl md:text-3xl font-medium">{entry.title}</h3>
+          </div>
+
+          <p className="text-muted-foreground leading-relaxed text-base">{entry.description}</p>
+
+          <div className="pt-2">
+            <h4 className="text-sm font-semibold mb-3 uppercase tracking-wider text-foreground">Key Takeaways</h4>
+            <ul className="space-y-2">
+              {entry.observations.map((observation: string, idx: number) => (
+                <li key={idx} className="text-sm text-muted-foreground flex items-start gap-3">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary mt-2 shrink-0"></span>
+                  <span>{observation}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="pt-4">
+            <Button
+              variant="outline"
+              className="gap-2 group"
+              onClick={() => onOpenWritten(entry.writtenJournal)}
+            >
+              <BookOpen className="h-4 w-4 transition-transform group-hover:scale-110" />
+              View Written Entry
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Card>
+  )
+}
+
 export function Journal() {
+  const [selectedJournal, setSelectedJournal] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  
+  // Changed itemsPerPage to 6 to show 2 rows (3 columns x 2 rows = 6 items)
+  const itemsPerPage = 6 
+  const totalPages = Math.ceil(galleryImages.length / itemsPerPage)
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
+  }
+
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev))
+  }
+
+  const currentGalleryImages = galleryImages.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
+
   return (
     <section id="journal" className="py-20 px-6">
       <div className="container mx-auto max-w-6xl">
         <div className="space-y-16">
           <div>
             <p className="text-sm text-muted-foreground uppercase tracking-wider mb-4">Journal</p>
-            <h2 className="text-3xl md:text-5xl font-light mb-4">Educational Tours</h2>
+            <h2 className="text-3xl md:text-5xl font-light mb-4">Cebu & Bohol Tour</h2>
             <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-              Documenting learning experiences, observations, and discoveries from various educational journeys.
+              Documenting our 4-day educational journey through the tech hubs of Cebu and the emergency response systems of Bohol.
             </p>
           </div>
 
           <div className="space-y-12">
-            {journalEntries.map((entry, index) => (
-              <Card key={entry.id} className="overflow-hidden bg-card">
-                <div className="grid md:grid-cols-2 gap-0">
-                  <div className={`relative h-64 md:h-full ${index % 2 === 1 ? "md:order-2" : ""}`}>
-                    <Image src={entry.image || "/placeholder.svg"} alt={entry.title} fill className="object-cover" />
-                  </div>
-                  <div className="p-8 md:p-12 space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <span>{entry.date}</span>
-                        <span>•</span>
-                        <span>{entry.location}</span>
-                      </div>
-                      <h3 className="text-2xl font-medium">{entry.title}</h3>
-                    </div>
-
-                    <p className="text-muted-foreground leading-relaxed">{entry.description}</p>
-
-                    <div className="pt-4">
-                      <h4 className="text-sm font-medium mb-3 uppercase tracking-wider">Key Observations</h4>
-                      <ul className="space-y-2">
-                        {entry.observations.map((observation, idx) => (
-                          <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
-                            <span className="text-primary mt-1">•</span>
-                            <span>{observation}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </Card>
+            {journalEntries.map((entry) => (
+              <JournalEntryCard 
+                key={entry.id} 
+                entry={entry} 
+                onOpenWritten={setSelectedJournal} 
+              />
             ))}
           </div>
 
           <div className="pt-12">
-            <h3 className="text-2xl font-light mb-8">Gallery</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {galleryImages.map((image) => (
-                <div key={image.id} className="relative aspect-[4/3] overflow-hidden rounded-lg bg-muted">
-                  <Image
-                    src={image.src || "/placeholder.svg"}
-                    alt={image.alt}
-                    fill
-                    className="object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-              ))}
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-2xl font-light">Tour Gallery</h3>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  className="h-8 w-8"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="text-sm text-muted-foreground min-w-[3rem] text-center">
+                  {currentPage} / {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="h-8 w-8"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            
+            <div className="min-h-[300px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentPage}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                >
+                  {currentGalleryImages.map((image) => (
+                    <div key={image.id} className="relative aspect-4/3 overflow-hidden rounded-lg bg-muted group cursor-pointer">
+                      <Image
+                        src={image.src}
+                        alt={image.alt}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                          <span className="text-white text-sm font-medium">{image.alt}</span>
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Written Journal Modal */}
+      <AnimatePresence>
+        {selectedJournal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4"
+            onClick={() => setSelectedJournal(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-3xl w-full bg-card rounded-lg shadow-2xl overflow-hidden border border-border"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between p-4 border-b">
+                <h3 className="font-medium">Written Journal Entry</h3>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setSelectedJournal(null)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="relative aspect-[3/4] w-full bg-muted/50">
+                <Image
+                  src={selectedJournal}
+                  alt="Written Journal Entry"
+                  fill
+                  className="object-contain p-4"
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }
