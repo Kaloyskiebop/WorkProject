@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { BookOpen, X, ChevronLeft, ChevronRight, ImageIcon } from "lucide-react"
+import { galleryImages } from "./gallery-list"
 
 // Updated data structure to support multiple images (slideshow)
 const journalEntries = [
@@ -22,12 +23,8 @@ const journalEntries = [
       "Insights into career paths for IT graduates",
     ],
     // Converted single 'image' to 'images' array for slideshow
-    images: [
-      "/journal/worldtech.jpg",
-      "/journal/worldtech2.jpg",
-      "/journal/worldtech3.jpg"
-    ], 
-    writtenJournal: "/journal/worldtech.jpg", 
+    images: ["/journal/worldtech.jpg"], 
+    writtenJournals: ["/written/worldtech-journal.jpg"], 
   },
   {
     id: 2,
@@ -41,13 +38,9 @@ const journalEntries = [
       "Gamified learning approaches to algorithm solving",
       "Networking with expert developers and mentors",
     ],
-    images: [
-      "/journal/rivanit.jpg", 
-      "/journal/rivanit2.jpg",
-      "/journal/codechum1.jpg",
-      "/journal/codechum2.jpg"
-    ],
-    writtenJournal: "/journal-entry-2.jpg",
+    images: ["/journal/rivanit.jpg"],
+    // Added 2 written journals for Day 2 as requested
+    writtenJournals: ["/written/rivan-journal.jpg", "/written/codechum-journal.jpg"],
   },
   {
     id: 3,
@@ -61,13 +54,8 @@ const journalEntries = [
       "The intersection of creative arts and advanced tech",
       "Potential of immersive technologies in enterprise",
     ],
-    images: [
-      "/journal/mata.jpg",
-      "/journal/mata2.jpg",
-      "/journal/mata3.jpg",
-      "/journal/mata4.jpg",
-    ],
-    writtenJournal: "/journal-entry-3.jpg",
+    images: ["/journal/mata.jpg"],
+    writtenJournals: ["/written/mata-journal.jpg"],
   },
   {
     id: 4,
@@ -81,50 +69,13 @@ const journalEntries = [
       "Real-time data handling for crisis management",
       "Public safety technology infrastructure",
     ],
-    images: [
-      "/journal/tagbilaran.jpg",
-      "/journal/tagbilaran2.jpg",
-      "/journal/tagbilaran3.jpg"
-    ],
-    writtenJournal: "/journal-entry-4.jpg",
-  },
-]
-
-const galleryImages = [
-  {
-    id: 1,
-    src: "/cebu-group-arrival.jpg",
-    alt: "Arrival in Cebu",
-  },
-  {
-    id: 2,
-    src: "/rivan-workshop.jpg",
-    alt: "Rivan IT Workshop",
-  },
-  {
-    id: 3,
-    src: "/codechum-challenge.jpg",
-    alt: "CodeChum Session",
-  },
-  {
-    id: 4,
-    src: "/mata-vr-demo.jpg",
-    alt: "VR Demo at Mata",
-  },
-  {
-    id: 5,
-    src: "/bohol-transit.jpg",
-    alt: "Travel to Bohol",
-  },
-  {
-    id: 6,
-    src: "/command-center-monitor.jpg",
-    alt: "911 Command Center",
+    images: ["/journal/tagbilaran.jpg"],
+    writtenJournals: ["/written/cdrrmo-journal.jpg"],
   },
 ]
 
 // Sub-component for individual journal cards to handle slideshow state
-function JournalEntryCard({ entry, onOpenWritten }: { entry: any, onOpenWritten: (img: string) => void }) {
+function JournalEntryCard({ entry, onOpenWritten }: { entry: any, onOpenWritten: (imgs: string[]) => void }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   // Automatic slideshow effect
@@ -208,7 +159,7 @@ function JournalEntryCard({ entry, onOpenWritten }: { entry: any, onOpenWritten:
             <Button
               variant="outline"
               className="gap-2 group"
-              onClick={() => onOpenWritten(entry.writtenJournal)}
+              onClick={() => onOpenWritten(entry.writtenJournals)}
             >
               <BookOpen className="h-4 w-4 transition-transform group-hover:scale-110" />
               View Written Entry
@@ -221,7 +172,8 @@ function JournalEntryCard({ entry, onOpenWritten }: { entry: any, onOpenWritten:
 }
 
 export function Journal() {
-  const [selectedJournal, setSelectedJournal] = useState<string | null>(null)
+  const [selectedJournals, setSelectedJournals] = useState<string[] | null>(null)
+  const [currentJournalIndex, setCurrentJournalIndex] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   
   // Changed itemsPerPage to 6 to show 2 rows (3 columns x 2 rows = 6 items)
@@ -241,6 +193,20 @@ export function Journal() {
     currentPage * itemsPerPage
   )
 
+  const handleNextJournal = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (selectedJournals) {
+      setCurrentJournalIndex((prev) => (prev + 1) % selectedJournals.length)
+    }
+  }
+
+  const handlePrevJournal = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (selectedJournals) {
+      setCurrentJournalIndex((prev) => (prev - 1 + selectedJournals.length) % selectedJournals.length)
+    }
+  }
+
   return (
     <section id="journal" className="py-20 px-6">
       <div className="container mx-auto max-w-6xl">
@@ -258,7 +224,10 @@ export function Journal() {
               <JournalEntryCard 
                 key={entry.id} 
                 entry={entry} 
-                onOpenWritten={setSelectedJournal} 
+                onOpenWritten={(journals) => {
+                  setSelectedJournals(journals)
+                  setCurrentJournalIndex(0)
+                }} 
               />
             ))}
           </div>
@@ -323,13 +292,13 @@ export function Journal() {
 
       {/* Written Journal Modal */}
       <AnimatePresence>
-        {selectedJournal && (
+        {selectedJournals && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4"
-            onClick={() => setSelectedJournal(null)}
+            onClick={() => setSelectedJournals(null)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -339,23 +308,72 @@ export function Journal() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between p-4 border-b">
-                <h3 className="font-medium">Written Journal Entry</h3>
+                <h3 className="font-medium">
+                  Written Journal Entry
+                  {selectedJournals.length > 1 && ` (${currentJournalIndex + 1}/${selectedJournals.length})`}
+                </h3>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8"
-                  onClick={() => setSelectedJournal(null)}
+                  onClick={() => setSelectedJournals(null)}
                 >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="relative aspect-[3/4] w-full bg-muted/50">
-                <Image
-                  src={selectedJournal}
-                  alt="Written Journal Entry"
-                  fill
-                  className="object-contain p-4"
-                />
+              
+              <div className="relative aspect-[3/4] w-full bg-muted/50 group">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentJournalIndex}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute inset-0"
+                  >
+                    <Image
+                      src={selectedJournals[currentJournalIndex]}
+                      alt={`Written Journal Entry Page ${currentJournalIndex + 1}`}
+                      fill
+                      className="object-contain p-4"
+                    />
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Carousel Controls for Written Journals */}
+                {selectedJournals.length > 1 && (
+                  <>
+                    <Button 
+                      variant="secondary"
+                      size="icon"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={handlePrevJournal}
+                    >
+                      <ChevronLeft className="h-6 w-6" />
+                    </Button>
+                    <Button 
+                      variant="secondary"
+                      size="icon"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={handleNextJournal}
+                    >
+                      <ChevronRight className="h-6 w-6" />
+                    </Button>
+                    
+                    {/* Dots Indicator */}
+                    <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+                       {selectedJournals.map((_, idx) => (
+                         <div 
+                           key={idx}
+                           className={`h-2 w-2 rounded-full shadow-sm transition-colors ${
+                             idx === currentJournalIndex ? "bg-primary" : "bg-muted-foreground/50"
+                           }`}
+                         />
+                       ))}
+                    </div>
+                  </>
+                )}
               </div>
             </motion.div>
           </motion.div>
